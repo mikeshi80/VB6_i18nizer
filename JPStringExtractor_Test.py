@@ -2,7 +2,7 @@
 # -*- encoding: utf8 -*-
 
 import unittest
-from JPStringExtractor import extract, replace
+from JPStringExtractor import *
 
 class JPStringExtractor_Test(unittest.TestCase):
 
@@ -30,6 +30,10 @@ class JPStringExtractor_Test(unittest.TestCase):
         r = extract(u'a="hello, world" & "no japanese word"')
         self.assertEqual(len(r), 0)
 
+    def test_extract_4(self):
+        r = extract(u'a=b & c')
+        self.assertEqual(len(r), 0)
+
     def test_replace_1(self):
         teststr = u'a = "Hello, " & "世界" & "人たち"'
         r = extract(teststr)
@@ -39,6 +43,49 @@ class JPStringExtractor_Test(unittest.TestCase):
         self.assertEqual(start, 1001)
         self.assertEqual(index, 1003)
 
+    def test_replace_2(self):
+        teststr = u'a = "Hello, " & "World" & " People"'
+        r = extract(teststr)
+        retline, rjp, start, index = replace(teststr, r, 1001)
+        self.assertEqual(rjp, r)
+        self.assertEqual(retline, teststr)
+        self.assertEqual(start, 1001)
+        self.assertEqual(index, 1001)
+
+    def test_export_1(self):
+        teststr = u'a = "Hello, " & "世界" & "人たち"'
+        r = extract(teststr)
+        start = 1001
+        lines = []
+        export(r, start, lines)
+        self.assertEqual(len(lines), 2)
+        self.assertEqual(lines[0], u'    1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"')
+        self.assertEqual(lines[1], u'    1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>')
+
+    def test_export_2(self):
+        teststr = u'a = "Hello, " & "World" & " People"'
+        r = extract(teststr)
+        start = 1001
+        lines = []
+        export(r, start, lines)
+        self.assertEqual(len(lines), 0)
+
+    def test_genStringTable(self):
+        teststr = u'a = "Hello, " & "世界" & "人たち"'
+        r = extract(teststr)
+        start = 1001
+        lines = []
+        export(r, start, lines)
+        st = genStringTable(lines, 'jp')
+        self.assertEqual(st, u'''STRINGTABLE
+LANGUAGE 0x11, 0x01
+BEGIN
+    1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"
+    1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>
+END''')
+        with self.assertRaises(ValueError) as cm:
+            genStringTable(lines, 'fr')
+        self.assertEqual(str(cm.exception), 'lang only supports en_us, zh_cn, jp_jp, en, us, zh, cn, jp')
 
 if __name__ == '__main__':
     unittest.main()

@@ -25,6 +25,7 @@ def extract(line):
         item['string'] = i.group(1)[1:-1]
         item['start'] = i.start()
         item['end'] = i.end()
+        item['hint'] = line[:item['start']] + '<target>' + line[item['start']:item['end']] + '</target>' + line[item['end']:]
         if hasJP(item['string']):
             retVal.append(item)
 
@@ -50,5 +51,39 @@ def replace(line, jps, start):
         retVal = retVal + line[last:]
 
     return retVal, jps, start, index
-        
-        
+
+def export(jps, start, lines):
+    '''
+    export jps info to lines
+    '''
+    for jp in jps:
+        lines.append(' ' * 4 + str(start) + ' ' * 12 + '"' + jp['string'] + ('" //' + jp['hint'] if 'hint' in jp else '') )
+        start = start + 1
+
+def genStringTable(lines, lang):
+    '''
+    generate the string table file
+    only three languages supported
+    'en_US', 'zh_CN', 'jp_JP'
+    '''
+    langs = {
+            'en_us': ('0x09', '0x01'),
+            'zh_cn': ('0x04', '0x02'),
+            'jp_jp': ('0x11', '0x01'),
+            'en': ('0x09', '0x01'),
+            'zh': ('0x04', '0x02'),
+            'jp': ('0x11', '0x01'),
+            'us': ('0x09', '0x01'),
+            'cn': ('0x04', '0x02')
+            }
+    if not lang.lower() in langs:
+        raise ValueError('lang only supports en_us, zh_cn, jp_jp, en, us, zh, cn, jp')
+
+    prim, sub = langs[lang.lower()]
+
+    return u'''STRINGTABLE
+LANGUAGE %s, %s
+BEGIN
+%s
+END''' % (prim, sub, u'\n'.join(lines))
+
