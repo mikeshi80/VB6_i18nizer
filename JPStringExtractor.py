@@ -50,7 +50,7 @@ def replace(line, jps, start):
     else:
         retVal = retVal + line[last:]
 
-    return retVal, jps, start, index
+    return retVal, index
 
 def export(jps, start, lines):
     '''

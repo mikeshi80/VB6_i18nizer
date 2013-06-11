@@ -3,6 +3,12 @@
 
 *.py text
 *.md text
+*.frm text
+*.bas text
+*.cls text
+*.RC text
+*.vbp text
+*.vbw text
 
 # Custom for Visual Studio
 *.cs     diff=csharp

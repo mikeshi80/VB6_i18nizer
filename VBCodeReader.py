@@ -6,6 +6,8 @@ import os.path
 import re
 import logging
 
+from JPStringExtractor import *
+
 encoding = 'cp932'
 
 BEFORE_ATTR = 1
@@ -111,4 +113,25 @@ def readline(fname):
     f.close()
     yield None, None, controls
 
+def genJpsByCtrls(lines, jps, controls):
+    pass
+
+def analyze(fname, jps, start):
+    '''
+    analyze the lines of file (fname)
+    
+    return replaced lines and jps container which contains Japanese for generating StringTable
+    '''
+    lines = []
+    retVal = {'lines': lines}
+    for line, pos, controls in readline(fname):
+        if controls != None:
+            genJpsByCtrls(lines, jps, controls)
+        else:
+            if pos != AFTER_ATTR:
+                lines.append(line)
+            else:
+                retLine, start = replace(line, jps, start)
+                lines.append(retLine)
+    return lines, start
 

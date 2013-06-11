@@ -37,19 +37,15 @@ class JPStringExtractor_Test(unittest.TestCase):
     def test_replace_1(self):
         teststr = u'a = "Hello, " & "世界" & "人たち"'
         r = extract(teststr)
-        retline, rjp, start, index = replace(teststr, r, 1001)
-        self.assertEqual(rjp, r)
+        retline, index = replace(teststr, r, 1001)
         self.assertEqual(retline, u'a = "Hello, " & LoadResString(1001) & LoadResString(1002)')
-        self.assertEqual(start, 1001)
         self.assertEqual(index, 1003)
 
     def test_replace_2(self):
         teststr = u'a = "Hello, " & "World" & " People"'
         r = extract(teststr)
-        retline, rjp, start, index = replace(teststr, r, 1001)
-        self.assertEqual(rjp, r)
+        retline, index = replace(teststr, r, 1001)
         self.assertEqual(retline, teststr)
-        self.assertEqual(start, 1001)
         self.assertEqual(index, 1001)
 
     def test_export_1(self):
