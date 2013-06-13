@@ -154,7 +154,7 @@ def genJpsByCtrls(jps, controls, start):
                         jp = {'index': start, 'string': ctrl[prop][propname],
                                 'hint': u'control name: {%s}, property name: {%s.%s}, value: {%s}'
                                 % (ctrl['Name'], prop, propname, ctrl[prop][propname])}
-                        line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                        line = u'    %s%s.%s.%s = LoadResString(%d)\r\n' % (ctrl['Name'],
                                 #if there is 'Index' property, then it is a member of controller array
                                 '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
                                 prop, propname, ctrl[prop][propname])
@@ -166,7 +166,7 @@ def genJpsByCtrls(jps, controls, start):
                 jp = {'index': start, 'string': ctrl[prop],
                         'hint': u'control name: {%s}, property name: {%s}, value: {%s}'
                         % (ctrl['Name'], prop, ctrl[prop])}
-                line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                line = u'    %s%s.%s = LoadResString(%d)\r\n' % (ctrl['Name'],
                         #if there is 'Index' property, then it is a member of controller array
                         '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
                         prop, start)
@@ -192,12 +192,15 @@ def analyze(fname, jps, start):
     for line, pos, controls in readline(fname):
         if controls != None:
              form_load, start = genJpsByCtrls(jps, controls, start)
+             #logging.warning('at last the start is %d', start)
         else:
             if pos != AFTER_ATTR:
                 lines.append(line)
             else:
-                jps = jps + extract(line)
-                retLine, start = replace(line, jps, start)
+                newjps = extract(line)
+                retLine, start = replace(line, newjps, start)
+                jps = jps + newjps
+                #logging.warning('in vb code start is %d', start)
                 lines.append(retLine)
     return lines, form_load, jps, start
 

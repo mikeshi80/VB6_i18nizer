@@ -7,6 +7,7 @@ import logging
 import codecs
 
 from VBCodeReader import analyze
+from VBCodeWriter import writeSource
 
 
 def visitor(options, dirname, names):
@@ -17,8 +18,8 @@ def visitor(options, dirname, names):
     for name in mynames:
         fname = os.path.join(dirname, name)
         if not os.path.isdir(fname):
-            data[fname] = analyze(fname, jps, start)
-
+            lines, form_load, jps, start = analyze(fname, jps, start)
+            writeSource(fname, lines, form_load)
 
 '''
 Usage:
