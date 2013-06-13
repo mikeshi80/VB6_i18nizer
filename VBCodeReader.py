@@ -112,25 +112,25 @@ def readline(fname):
 
     pos = BEFORE_ATTR
     
-    filetype = os.path.splitext(fname).lower()
+    filetype = os.path.splitext(fname)[1].lower()
 
     control = None
     controls = [] # it is the result for summary output
     ctrlStack = [] # it is the stack for controls
     propname = u''
 
-    for line in f:
+    for line in rf:
         if pos == BEFORE_ATTR and line.startswith('Attribute '):
             pos = IN_ATTR
         elif pos == IN_ATTR and not line.startswith('Attribute '):
             pos = AFTER_ATTR
         
         if filetype == '.frm':
-            line, pos, control = procFrm(line, pos, control, propname, controls, ctrlStack)
+            pos, control, propname = procFrm(line, pos, control, propname, controls, ctrlStack)
 
         yield line, pos, None
 
-    f.close()
+    rf.close()
     yield None, None, controls
 
 def genJpsByCtrls(jps, controls, start):
@@ -183,6 +183,7 @@ def analyze(fname, jps, start):
     return
     lines: replaced lines and jps container which contains Japanese for generating StringTable
     form_load: the source code in the form load subroutine for updating the controllers' properties.
+    jps: the Japanese strings information.
     start: the RC index for the next source file.
     '''
     lines = []
@@ -195,7 +196,8 @@ def analyze(fname, jps, start):
             if pos != AFTER_ATTR:
                 lines.append(line)
             else:
+                jps = jps + extract(line)
                 retLine, start = replace(line, jps, start)
                 lines.append(retLine)
-    return lines, form_load, start
+    return lines, form_load, jps, start
 

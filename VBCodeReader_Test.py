@@ -230,6 +230,16 @@ class VBCodeReader_Test(unittest.TestCase):
         self.assertEqual(lines[3], u'    Label1(0).Caption = LoadResString(1004)')
         self.assertEqual(jps[3]['string'], u'"ラベル１"')
 
+    def test_analyze(self):
+        fname = 'test/vbtest/vbtest_with_load/Form1.frm'
+        jps = []
+        start = 1001
+
+        lines, form_load, jps, index = analyze(fname, jps, start)
+
+        self.assertEqual(len(jps), 7)
+        
+
 
 
 if __name__ == '__main__':

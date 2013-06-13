@@ -11,6 +11,7 @@
 *.vbw text
 *.TXT text
 *.txt text
+*.cmd text
 
 # Custom for Visual Studio
 *.cs     diff=csharp

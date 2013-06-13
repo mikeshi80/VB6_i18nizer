@@ -10,7 +10,7 @@ from VBCodeReader import analyze
 
 
 def visitor(options, dirname, names):
-    mynames = filter(lambda n : os.path.splitext(n)[2].lower() in options[1], names)
+    mynames = filter(lambda n : os.path.splitext(n)[1].lower() in options[1], names)
     
     jps = options[0]
     start = options[1]
