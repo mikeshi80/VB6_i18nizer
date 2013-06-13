@@ -85,17 +85,9 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Sub Form_Load()
-    Label1(1).Caption = LoadResString(1004)
-    Frame1.Caption = LoadResString(1005)
-    Label2.Caption = LoadResString(1006)
-    Label1(0).Caption = LoadResString(1007)
-Label2.Caption = LoadResString(1001)
-    
-End Sub
 
 Private Sub Label1_Click(Index As Integer)
-    Form1.Caption = LoadResString(1002)
+    Form1.Caption = LoadResString(1001)
     
     Label1(1).Caption = GetName()
     
@@ -104,8 +96,15 @@ End Sub
 Private Sub Label2_Click()
     Dim p As People
     Set p = New People
-    p.m_Name = LoadResString(1003)
+    p.m_Name = LoadResString(1002)
         
     
     Label1(0).Caption = p.m_Name
+End Sub
+
+Private Sub Form_Load()
+    Label1(1).Caption = LoadResString(1003)
+    Frame1.Caption = LoadResString(1004)
+    Label2.Caption = LoadResString(1005)
+    Label1(0).Caption = LoadResString(1006)
 End Sub

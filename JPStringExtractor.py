@@ -85,9 +85,9 @@ def genStringTable(lines, lang):
 
     prim, sub = langs[lang.lower()]
 
-    return u'''STRINGTABLE
-LANGUAGE %s, %s
-BEGIN
-%s
-END''' % (prim, sub, u'\n'.join(lines))
+    return u'''STRINGTABLE\r
+LANGUAGE %s, %s\r
+BEGIN\r
+%s\r
+END''' % (prim, sub, u'\r\n'.join(lines))
 

@@ -25,7 +25,7 @@ End Property
 Public Property Get m_Name() As String
 'used when retrieving value of a property, on the right side of an assignment.
 'Syntax: Debug.Print X.m_Name
-    m_Name = "–¼‘O:" & mvarm_Name
+    m_Name = LoadResString(1001) & mvarm_Name
 End Property
 
 

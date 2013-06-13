@@ -8,36 +8,50 @@ import codecs
 
 from VBCodeReader import analyze
 from VBCodeWriter import writeSource
+from JPStringExtractor import export, genStringTable
 
 
 def visitor(options, dirname, names):
     mynames = filter(lambda n : os.path.splitext(n)[1].lower() in options[1], names)
+
+    #logging.warning('names is %s', names)
     
-    jps = options[0]
-    start = options[1]
+    start = options[0]
+    global jps
     for name in mynames:
         fname = os.path.join(dirname, name)
         if not os.path.isdir(fname):
+            #logging.warning('is processing {%s}', fname)
             lines, form_load, jps, start = analyze(fname, jps, start)
             writeSource(fname, lines, form_load)
 
 '''
 Usage:
-    python main.py topdir .ext1 [.ext2] ...
+    python main.py topdir [.ext1] [.ext2] ...
 '''
 if __name__ == "__main__":
-    logging.basicConfig(filename='analyze.log')
+    #logging.basicConfig(filename='analyze.log')
 
     topdir = sys.argv[1]
 
-    filters = ('*.frm', '*.bas', '*.cls')
+    filters = ('.frm', '.bas', '.cls')
     if len(sys.argv) > 2:
         filters = sys.argv[2:]
 
-    jps = {} # jps is the Japanese StringTable container
+    global jps
+    jps = [] # jps is the Japanese StringTable container
     start = 1001
 
-    os.path.walk(topdir, visitor, (jps, start, filters))
+    os.path.walk(topdir, visitor, (start, filters))
 
+    stlines = []
+    export(jps, stlines)
 
+    f = codecs.open(os.path.join(topdir, 'StringTable_JP.RC'), 'w', 'utf-16')
+    f.write(genStringTable(stlines, 'jp'))
+    f.close()
+
+    f = codecs.open(os.path.join(topdir, 'StringTable_CN.RC'), 'w', 'utf-16')
+    f.write(genStringTable(stlines, 'zh_CN'))
+    f.close()
 

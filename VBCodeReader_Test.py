@@ -221,14 +221,14 @@ class VBCodeReader_Test(unittest.TestCase):
         lines, index = genJpsByCtrls(jps, controls, start)
 
         self.assertEqual(index, 1005)
-        self.assertEqual(lines[0], u'    Label1(1).Caption = LoadResString(1001)\r\n')
-        self.assertEqual(jps[0]['string'], u'"ラベル３"')
-        self.assertEqual(lines[1], u'    Frame1.Caption = LoadResString(1002)\r\n')
-        self.assertEqual(jps[1]['string'], u'"フレーム１"')
-        self.assertEqual(lines[2], u'    Label2.Caption = LoadResString(1003)\r\n')
-        self.assertEqual(jps[2]['string'], u'"ラベル２"')
-        self.assertEqual(lines[3], u'    Label1(0).Caption = LoadResString(1004)\r\n')
-        self.assertEqual(jps[3]['string'], u'"ラベル１"')
+        self.assertEqual(lines[0], u'    Label1(1).Caption = LoadResString(1001)')
+        self.assertEqual(jps[0]['string'], u'ラベル３')
+        self.assertEqual(lines[1], u'    Frame1.Caption = LoadResString(1002)')
+        self.assertEqual(jps[1]['string'], u'フレーム１')
+        self.assertEqual(lines[2], u'    Label2.Caption = LoadResString(1003)')
+        self.assertEqual(jps[2]['string'], u'ラベル２')
+        self.assertEqual(lines[3], u'    Label1(0).Caption = LoadResString(1004)')
+        self.assertEqual(jps[3]['string'], u'ラベル１')
 
     def test_analyze(self):
         fname = 'test/vbtest/vbtest_with_load/Form1.frm'
@@ -248,14 +248,14 @@ class VBCodeReader_Test(unittest.TestCase):
         self.assertEqual(lines[103], u'    p.m_Name = LoadResString(1003)\r\n')
         self.assertEqual(jps[2]['string'], u'ドラえもん')
 
-        self.assertEqual(form_load[0], u'    Label1(1).Caption = LoadResString(1004)\r\n')
-        self.assertEqual(jps[3]['string'], u'"ラベル３"')
-        self.assertEqual(form_load[1], u'    Frame1.Caption = LoadResString(1005)\r\n')
-        self.assertEqual(jps[4]['string'], u'"フレーム１"')
-        self.assertEqual(form_load[2], u'    Label2.Caption = LoadResString(1006)\r\n')
-        self.assertEqual(jps[5]['string'], u'"ラベル２"')
-        self.assertEqual(form_load[3], u'    Label1(0).Caption = LoadResString(1007)\r\n')
-        self.assertEqual(jps[6]['string'], u'"ラベル１"')
+        self.assertEqual(form_load[0], u'    Label1(1).Caption = LoadResString(1004)')
+        self.assertEqual(jps[3]['string'], u'ラベル３')
+        self.assertEqual(form_load[1], u'    Frame1.Caption = LoadResString(1005)')
+        self.assertEqual(jps[4]['string'], u'フレーム１')
+        self.assertEqual(form_load[2], u'    Label2.Caption = LoadResString(1006)')
+        self.assertEqual(jps[5]['string'], u'ラベル２')
+        self.assertEqual(form_load[3], u'    Label1(0).Caption = LoadResString(1007)')
+        self.assertEqual(jps[6]['string'], u'ラベル１')
 
 
 if __name__ == '__main__':

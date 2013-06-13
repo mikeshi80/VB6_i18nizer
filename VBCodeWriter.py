@@ -19,7 +19,13 @@ def writeSource(fname, lines, form_load, forTest = False):
         for line in lines:
             wf.write(line)
             if line.startswith(u'Private Sub Form_Load()'):
-                wf.writelines(form_load)
+                wf.writelines('\r\n'.join(form_load))
+                hasForm_Load = True
+
+        if not hasForm_Load:
+            wf.write('\r\nPrivate Sub Form_Load()\r\n')
+            wf.writelines('\r\n'.join(form_load))
+            wf.write('\r\nEnd Sub\r\n')
 
     wf.close()
 

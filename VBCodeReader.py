@@ -151,10 +151,10 @@ def genJpsByCtrls(jps, controls, start):
             if type(ctrl[prop]) == dict:
                 for propname in ctrl[prop]:
                     if hasJP(ctrl[prop][propname]):
-                        jp = {'index': start, 'string': ctrl[prop][propname],
+                        jp = {'index': start, 'string': ctrl[prop][propname][1:-1],
                                 'hint': u'control name: {%s}, property name: {%s.%s}, value: {%s}'
-                                % (ctrl['Name'], prop, propname, ctrl[prop][propname])}
-                        line = u'    %s%s.%s.%s = LoadResString(%d)\r\n' % (ctrl['Name'],
+                                % (ctrl['Name'], prop, propname, ctrl[prop][propname][1:-1])}
+                        line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
                                 #if there is 'Index' property, then it is a member of controller array
                                 '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
                                 prop, propname, ctrl[prop][propname])
@@ -163,10 +163,10 @@ def genJpsByCtrls(jps, controls, start):
                         start = start + 1
 
             elif hasJP(ctrl[prop]):
-                jp = {'index': start, 'string': ctrl[prop],
+                jp = {'index': start, 'string': ctrl[prop][1:-1],
                         'hint': u'control name: {%s}, property name: {%s}, value: {%s}'
-                        % (ctrl['Name'], prop, ctrl[prop])}
-                line = u'    %s%s.%s = LoadResString(%d)\r\n' % (ctrl['Name'],
+                        % (ctrl['Name'], prop, ctrl[prop][1:-1])}
+                line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
                         #if there is 'Index' property, then it is a member of controller array
                         '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
                         prop, start)

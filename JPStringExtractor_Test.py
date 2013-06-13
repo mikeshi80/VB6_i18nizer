@@ -75,11 +75,11 @@ class JPStringExtractor_Test(unittest.TestCase):
         lines = []
         export(r, lines)
         st = genStringTable(lines, 'jp')
-        self.assertEqual(st, u'''STRINGTABLE
-LANGUAGE 0x11, 0x01
-BEGIN
-    1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"
-    1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>
+        self.assertEqual(st, u'''STRINGTABLE\r
+LANGUAGE 0x11, 0x01\r
+BEGIN\r
+    1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"\r
+    1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>\r
 END''')
         with self.assertRaises(ValueError) as cm:
             genStringTable(lines, 'fr')
