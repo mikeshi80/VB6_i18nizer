@@ -51,9 +51,9 @@ class JPStringExtractor_Test(unittest.TestCase):
     def test_export_1(self):
         teststr = u'a = "Hello, " & "世界" & "人たち"'
         r = extract(teststr)
-        start = 1001
+        retline, index = replace(teststr, r, 1001)
         lines = []
-        export(r, start, lines)
+        export(r, lines)
         self.assertEqual(len(lines), 2)
         self.assertEqual(lines[0], u'    1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"')
         self.assertEqual(lines[1], u'    1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>')
@@ -61,17 +61,19 @@ class JPStringExtractor_Test(unittest.TestCase):
     def test_export_2(self):
         teststr = u'a = "Hello, " & "World" & " People"'
         r = extract(teststr)
-        start = 1001
+        retline, index = replace(teststr, r, 1001)
+
         lines = []
-        export(r, start, lines)
+        export(r, lines)
         self.assertEqual(len(lines), 0)
 
     def test_genStringTable(self):
         teststr = u'a = "Hello, " & "世界" & "人たち"'
         r = extract(teststr)
-        start = 1001
+        retline, index = replace(teststr, r, 1001)
+
         lines = []
-        export(r, start, lines)
+        export(r, lines)
         st = genStringTable(lines, 'jp')
         self.assertEqual(st, u'''STRINGTABLE
 LANGUAGE 0x11, 0x01

@@ -23,6 +23,26 @@ def procCtrl(line, control):
     pass
 
 def procProp(line, control, propname, controls, ctrlStack):
+    '''
+    The function for processing VB frm file's property section like following sample:
+
+         BeginProperty Font 
+            Name            =   "ＭＳ ゴシック"
+            Size            =   9
+            Charset         =   128
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+        
+    line:       the input line
+    control:    the current control
+    propname:   the current property name
+    controls:   the generated controls
+    ctrlStack:  the stack for control
+    '''
+
     if (len(propname) > 0):
         mo = PPROP.match(line)
         if mo == None:
@@ -67,7 +87,7 @@ def procFrm(line, pos, control, propname, controls, ctrlStack):
                 ctrlStack.append(control) # save the out level control
 
             control = {'Type': mo.group(1), 'Name': mo.group(2)}
-    return line, pos, control, propname
+    return pos, control, propname
 
 def readline(fname):
     '''
@@ -113,25 +133,69 @@ def readline(fname):
     f.close()
     yield None, None, controls
 
-def genJpsByCtrls(lines, jps, controls):
-    pass
+def genJpsByCtrls(jps, controls, start):
+    '''
+    analyze the controls info to generate the Japanese strings
+    return:
+    lines: the generated initialization code for form load
+    start: the start index for next process
+    '''
+    lines = []
+    for ctrl in controls:
+        for prop in ctrl:
+            # 'Name' and 'Type' are not real control's properties
+            # 'Font' need to be processed specially
+            if prop in ('Name', 'Type', u'Font'): 
+                continue
+
+            if type(ctrl[prop]) == dict:
+                for propname in ctrl[prop]:
+                    if hasJP(ctrl[prop][propname]):
+                        jp = {'index': start, 'string': ctrl[prop][propname],
+                                'hint': u'control name: {%s}, property name: {%s.%s}, value: {%s}'
+                                % (ctrl['Name'], prop, propname, ctrl[prop][propname])}
+                        line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                                #if there is 'Index' property, then it is a member of controller array
+                                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                                prop, propname, ctrl[prop][propname])
+                        jps.append(jp)
+                        lines.append(line)
+                        start = start + 1
+
+            elif hasJP(ctrl[prop]):
+                jp = {'index': start, 'string': ctrl[prop],
+                        'hint': u'control name: {%s}, property name: {%s}, value: {%s}'
+                        % (ctrl['Name'], prop, ctrl[prop])}
+                line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                        #if there is 'Index' property, then it is a member of controller array
+                        '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                        prop, start)
+                jps.append(jp)
+                lines.append(line)
+                start = start + 1
+
+    return lines, start
 
 def analyze(fname, jps, start):
     '''
     analyze the lines of file (fname)
     
-    return replaced lines and jps container which contains Japanese for generating StringTable
+    return
+    lines: replaced lines and jps container which contains Japanese for generating StringTable
+    form_load: the source code in the form load subroutine for updating the controllers' properties.
+    start: the RC index for the next source file.
     '''
     lines = []
+    form_load = [] # the initialization code for update controllers' properties in the form load subroutine
     retVal = {'lines': lines}
     for line, pos, controls in readline(fname):
         if controls != None:
-            genJpsByCtrls(lines, jps, controls)
+             form_load, start = genJpsByCtrls(jps, controls, start)
         else:
             if pos != AFTER_ATTR:
                 lines.append(line)
             else:
                 retLine, start = replace(line, jps, start)
                 lines.append(retLine)
-    return lines, start
+    return lines, form_load, start
 

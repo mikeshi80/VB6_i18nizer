@@ -36,12 +36,17 @@ def replace(line, jps, start):
     Replace the Japanese string with LoadResString method
     jps is the result returned by extract
     start is the number for StringTable
+
+    return:
+    retVal: the replaced line
+    index: the new index for next replace
     '''
     retVal = u''
     last = 0
     index = start
     for jp in jps:
         retVal = retVal + line[last:jp['start']] + 'LoadResString(' + str(index) + ')'
+        jp['index'] = index
         index = index + 1
         last = jp['end']
 
@@ -52,13 +57,12 @@ def replace(line, jps, start):
 
     return retVal, index
 
-def export(jps, start, lines):
+def export(jps, lines):
     '''
     export jps info to lines
     '''
     for jp in jps:
-        lines.append(' ' * 4 + str(start) + ' ' * 12 + '"' + jp['string'] + ('" //' + jp['hint'] if 'hint' in jp else '') )
-        start = start + 1
+        lines.append(' ' * 4 + str(jp['index']) + ' ' * 12 + '"' + jp['string'] + ('" //' + jp['hint'] if 'hint' in jp else '') )
 
 def genStringTable(lines, lang):
     '''
