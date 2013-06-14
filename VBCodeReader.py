@@ -142,6 +142,24 @@ def genJpsByCtrls(jps, controls, start):
     '''
     lines = []
     for ctrl in controls:
+
+        lines.append('    %s%s.Font.Name = LoadResString(%d)' % (ctrl['Name'],
+                #if there is 'Index' property, then it is a member of controller array
+                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+        jp = {'index': start, 'string': u'ＭＳ ゴシック', 'hint': '%s%s.Font.Name' % (ctrl['Name'],
+                                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '')}
+        start = start + 1
+        jps.append(jp)
+
+        lines.append('    %s%s.Font.Charset = LoadResString(%d)' % (ctrl['Name'],
+                #if there is 'Index' property, then it is a member of controller array
+                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+        jp = {'index': start, 'string': '128', 'hint': '%s%s.Font.Charset: 128 for JP, 134 for CN' % (ctrl['Name'],
+                                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '')}
+        start = start + 1
+        jps.append(jp)
+
+
         for prop in ctrl:
             # 'Name' and 'Type' are not real control's properties
             # 'Font' need to be processed specially
@@ -152,20 +170,22 @@ def genJpsByCtrls(jps, controls, start):
                 for propname in ctrl[prop]:
                     if hasJP(ctrl[prop][propname]):
                         jp = {'index': start, 'string': ctrl[prop][propname][1:-1],
-                                'hint': u'control name: {%s}, property name: {%s.%s}, value: {%s}'
+                                'hint': u'%s.%s.%s = "%s"'
                                 % (ctrl['Name'], prop, propname, ctrl[prop][propname][1:-1])}
                         line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
                                 #if there is 'Index' property, then it is a member of controller array
                                 '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
-                                prop, propname, ctrl[prop][propname])
+                                prop, propname, start)
                         jps.append(jp)
                         lines.append(line)
                         start = start + 1
 
             elif hasJP(ctrl[prop]):
                 jp = {'index': start, 'string': ctrl[prop][1:-1],
-                        'hint': u'control name: {%s}, property name: {%s}, value: {%s}'
-                        % (ctrl['Name'], prop, ctrl[prop][1:-1])}
+                        'hint': u'%s%s.%s = %s'
+                        % (ctrl['Name'],
+                        '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                        prop, ctrl[prop][1:-1])}
                 line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
                         #if there is 'Index' property, then it is a member of controller array
                         '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
@@ -173,6 +193,8 @@ def genJpsByCtrls(jps, controls, start):
                 jps.append(jp)
                 lines.append(line)
                 start = start + 1
+
+        lines.append('\r\n')
 
     return lines, start
 

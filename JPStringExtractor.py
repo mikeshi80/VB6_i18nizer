@@ -4,6 +4,7 @@
 import re
 
 from JPChecker import hasJP
+import CommentsRemover
 
 Patt = re.compile(r'("[^"]*")')
 def extract(line):
@@ -19,13 +20,14 @@ def extract(line):
         <string:"人たち", start: 23, end: 28}
     )
     '''
+    line = CommentsRemover.remove(line)
     retVal = []
     for i in Patt.finditer(line):
         item = {}
         item['string'] = i.group(1)[1:-1]
         item['start'] = i.start()
         item['end'] = i.end()
-        item['hint'] = line[:item['start']] + '<target>' + line[item['start']:item['end']] + '</target>' + line[item['end']:]
+        item['hint'] = line[:item['start']] + '<target>' + line[item['start']:item['end']] + '</target>' + line[item['end']:-2]
         if hasJP(item['string']):
             retVal.append(item)
 
@@ -89,5 +91,6 @@ def genStringTable(lines, lang):
 LANGUAGE %s, %s\r
 BEGIN\r
 %s\r
-END''' % (prim, sub, u'\r\n'.join(lines))
+END\r
+''' % (prim, sub, u'\r\n'.join(lines))
 
