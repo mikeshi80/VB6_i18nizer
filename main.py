@@ -11,13 +11,13 @@ from VBCodeWriter import writeSource
 from JPStringExtractor import export, genStringTable
 
 
-def visitor(options, dirname, names):
-    mynames = filter(lambda n : os.path.splitext(n)[1].lower() in options[1], names)
+def visitor(filters, dirname, names):
+    mynames = filter(lambda n : os.path.splitext(n)[1].lower() in filters, names)
 
     #logging.warning('names is %s', names)
     
-    start = options[0]
     global jps
+    global start
     for name in mynames:
         fname = os.path.join(dirname, name)
         if not os.path.isdir(fname):
@@ -57,9 +57,10 @@ if __name__ == "__main__":
 
     global jps
     jps = [] # jps is the Japanese StringTable container
+    global start
     start = 1001
 
-    os.path.walk(topdir, visitor, (start, filters))
+    os.path.walk(topdir, visitor, filters)
 
     writeRCFiles(topdir, jps)
 
