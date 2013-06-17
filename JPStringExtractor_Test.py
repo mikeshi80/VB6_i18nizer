@@ -80,7 +80,8 @@ LANGUAGE 0x11, 0x01\r
 BEGIN\r
     1001            "世界" //a = "Hello, " & <target>"世界"</target> & "人たち"\r
     1002            "人たち" //a = "Hello, " & "世界" & <target>"人たち"</target>\r
-END''')
+END\r
+''')
         with self.assertRaises(ValueError) as cm:
             genStringTable(lines, 'fr')
         self.assertEqual(str(cm.exception), 'lang only supports en_us, zh_cn, jp_jp, en, us, zh, cn, jp')

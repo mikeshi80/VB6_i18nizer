@@ -86,10 +86,30 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub Form_Load()
-    Label1(1).Caption = LoadResString(1004)
-    Frame1.Caption = LoadResString(1005)
-    Label2.Caption = LoadResString(1006)
-    Label1(0).Caption = LoadResString(1007)
+    Label1(1).Font.Name = LoadResString(1004)
+    Label1(1).Font.Charset = LoadResString(1005)
+    Label1(1).Caption = LoadResString(1006)
+
+
+    Frame1.Font.Name = LoadResString(1007)
+    Frame1.Font.Charset = LoadResString(1008)
+    Frame1.Caption = LoadResString(1009)
+
+
+    Label2.Font.Name = LoadResString(1010)
+    Label2.Font.Charset = LoadResString(1011)
+    Label2.Caption = LoadResString(1012)
+
+
+    Label1(0).Font.Name = LoadResString(1013)
+    Label1(0).Font.Charset = LoadResString(1014)
+    Label1(0).Caption = LoadResString(1015)
+
+
+    Form1.Font.Name = LoadResString(1016)
+    Form1.Font.Charset = LoadResString(1017)
+
+
 Label2.Caption = LoadResString(1001)
     
 End Sub

@@ -27,7 +27,7 @@ def extract(line):
         item['string'] = i.group(1)[1:-1]
         item['start'] = i.start()
         item['end'] = i.end()
-        item['hint'] = line[:item['start']] + '<target>' + line[item['start']:item['end']] + '</target>' + line[item['end']:-2]
+        item['hint'] = line[:item['start']] + '<target>' + line[item['start']:item['end']] + '</target>' + (line[item['end']:-2] if line.endswith('\r\n') else line[item['end']:])
         if hasJP(item['string']):
             retVal.append(item)
 

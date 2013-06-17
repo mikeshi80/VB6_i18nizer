@@ -103,8 +103,28 @@ Private Sub Label2_Click()
 End Sub
 
 Private Sub Form_Load()
-    Label1(1).Caption = LoadResString(1003)
-    Frame1.Caption = LoadResString(1004)
-    Label2.Caption = LoadResString(1005)
-    Label1(0).Caption = LoadResString(1006)
+    Label1(1).Font.Name = LoadResString(1003)
+    Label1(1).Font.Charset = LoadResString(1004)
+    Label1(1).Caption = LoadResString(1005)
+
+
+    Frame1.Font.Name = LoadResString(1006)
+    Frame1.Font.Charset = LoadResString(1007)
+    Frame1.Caption = LoadResString(1008)
+
+
+    Label2.Font.Name = LoadResString(1009)
+    Label2.Font.Charset = LoadResString(1010)
+    Label2.Caption = LoadResString(1011)
+
+
+    Label1(0).Font.Name = LoadResString(1012)
+    Label1(0).Font.Charset = LoadResString(1013)
+    Label1(0).Caption = LoadResString(1014)
+
+
+    Form1.Font.Name = LoadResString(1015)
+    Form1.Font.Charset = LoadResString(1016)
+
+
 End Sub

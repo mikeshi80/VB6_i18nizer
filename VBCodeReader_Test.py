@@ -220,15 +220,23 @@ class VBCodeReader_Test(unittest.TestCase):
         
         lines, index = genJpsByCtrls(jps, controls, start)
 
-        self.assertEqual(index, 1005)
-        self.assertEqual(lines[0], u'    Label1(1).Caption = LoadResString(1001)')
-        self.assertEqual(jps[0]['string'], u'ラベル３')
-        self.assertEqual(lines[1], u'    Frame1.Caption = LoadResString(1002)')
-        self.assertEqual(jps[1]['string'], u'フレーム１')
-        self.assertEqual(lines[2], u'    Label2.Caption = LoadResString(1003)')
-        self.assertEqual(jps[2]['string'], u'ラベル２')
-        self.assertEqual(lines[3], u'    Label1(0).Caption = LoadResString(1004)')
-        self.assertEqual(jps[3]['string'], u'ラベル１')
+        self.assertEqual(index, 1015)
+        self.assertEqual(lines[0], u'    Label1(1).Font.Name = LoadResString(1001)')
+        self.assertEqual(lines[1], u'    Label1(1).Font.Charset = LoadResString(1002)')
+        self.assertEqual(lines[2], u'    Label1(1).Caption = LoadResString(1003)')
+        self.assertEqual(jps[2]['string'], u'ラベル３')
+        self.assertEqual(lines[4], u'    Frame1.Font.Name = LoadResString(1004)')
+        self.assertEqual(lines[5], u'    Frame1.Font.Charset = LoadResString(1005)')
+        self.assertEqual(lines[6], u'    Frame1.Caption = LoadResString(1006)')
+        self.assertEqual(jps[5]['string'], u'フレーム１')
+        self.assertEqual(lines[8], u'    Label2.Font.Name = LoadResString(1007)')
+        self.assertEqual(lines[9], u'    Label2.Font.Charset = LoadResString(1008)')
+        self.assertEqual(lines[10], u'    Label2.Caption = LoadResString(1009)')
+        self.assertEqual(jps[8]['string'], u'ラベル２')
+        self.assertEqual(lines[12], u'    Label1(0).Font.Name = LoadResString(1010)')
+        self.assertEqual(lines[13], u'    Label1(0).Font.Charset = LoadResString(1011)')
+        self.assertEqual(lines[14], u'    Label1(0).Caption = LoadResString(1012)')
+        self.assertEqual(jps[11]['string'], u'ラベル１')
 
     def test_analyze(self):
         fname = 'test/vbtest/vbtest_with_load/Form1.frm'
@@ -237,9 +245,9 @@ class VBCodeReader_Test(unittest.TestCase):
 
         lines, form_load, jps, index = analyze(fname, jps, start)
 
-        self.assertEqual(len(jps), 7)
+        self.assertEqual(len(jps), 17)
 
-        self.assertEqual(index, 1008)
+        self.assertEqual(index, 1018)
 
         self.assertEqual(lines[89], u'Label2.Caption = LoadResString(1001)\r\n')
         self.assertEqual(jps[0]['string'], u"'世界'")
@@ -248,14 +256,22 @@ class VBCodeReader_Test(unittest.TestCase):
         self.assertEqual(lines[103], u'    p.m_Name = LoadResString(1003)\r\n')
         self.assertEqual(jps[2]['string'], u'ドラえもん')
 
-        self.assertEqual(form_load[0], u'    Label1(1).Caption = LoadResString(1004)')
-        self.assertEqual(jps[3]['string'], u'ラベル３')
-        self.assertEqual(form_load[1], u'    Frame1.Caption = LoadResString(1005)')
-        self.assertEqual(jps[4]['string'], u'フレーム１')
-        self.assertEqual(form_load[2], u'    Label2.Caption = LoadResString(1006)')
-        self.assertEqual(jps[5]['string'], u'ラベル２')
-        self.assertEqual(form_load[3], u'    Label1(0).Caption = LoadResString(1007)')
-        self.assertEqual(jps[6]['string'], u'ラベル１')
+        self.assertEqual(form_load[0], u'    Label1(1).Font.Name = LoadResString(1004)')
+        self.assertEqual(form_load[1], u'    Label1(1).Font.Charset = LoadResString(1005)')
+        self.assertEqual(form_load[2], u'    Label1(1).Caption = LoadResString(1006)')
+        self.assertEqual(jps[5]['string'], u'ラベル３')
+        self.assertEqual(form_load[4], u'    Frame1.Font.Name = LoadResString(1007)')
+        self.assertEqual(form_load[5], u'    Frame1.Font.Charset = LoadResString(1008)')
+        self.assertEqual(form_load[6], u'    Frame1.Caption = LoadResString(1009)')
+        self.assertEqual(jps[8]['string'], u'フレーム１')
+        self.assertEqual(form_load[8], u'    Label2.Font.Name = LoadResString(1010)')
+        self.assertEqual(form_load[9], u'    Label2.Font.Charset = LoadResString(1011)')
+        self.assertEqual(form_load[10], u'    Label2.Caption = LoadResString(1012)')
+        self.assertEqual(jps[11]['string'], u'ラベル２')
+        self.assertEqual(form_load[12], u'    Label1(0).Font.Name = LoadResString(1013)')
+        self.assertEqual(form_load[13], u'    Label1(0).Font.Charset = LoadResString(1014)')
+        self.assertEqual(form_load[14], u'    Label1(0).Caption = LoadResString(1015)')
+        self.assertEqual(jps[14]['string'], u'ラベル１')
 
 
 if __name__ == '__main__':
