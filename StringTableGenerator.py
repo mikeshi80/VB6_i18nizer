@@ -2,7 +2,16 @@
 # -*- encoding: utf8 -*-
 
 class StringTableGenerator(object):
+    '''
+    the generator for generating the StringTable files
+    '''
     def __init__(self, start):
+        '''
+        the constructor of the class
+
+        arguments:
+        start -- the start index for the StringTable
+        '''
         self.__strtbl = {}
         self.__current = start
 
@@ -23,6 +32,14 @@ class StringTableGenerator(object):
         return retVal
 
     def genHint(self, info, begin = '<target>', end = '</target>'):
+        '''
+        generate the hint that helps the translator to understand the context
+        
+        arguments:
+        info -- StringTableInfo
+        begin -- the begin string, default is '<target>'
+        end -- the end string, default is '</target>'
+        '''
         if len(info.line) > 0:
             return info.line[:info.begin] + begin + info.line[info.begin:info.end] + end + info.line[info.end:]
         else:

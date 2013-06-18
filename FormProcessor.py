@@ -4,6 +4,10 @@
 import re
 
 class FormProcessor(object):
+    '''
+    the processor for processing the controllers information
+    in the frm files
+    '''
 
     PCTRL = re.compile(r'\s*Begin VB\.(\w+) (\w+)\s*') # the pattern for VB Control definition line in frm file.
     PPROP = re.compile(r'\s*(\w+)\s*=\s*("[^"]+"|\d+)(?:\'.*)?') # the pattern for VB Control Properties definition line
@@ -21,6 +25,13 @@ class FormProcessor(object):
         self.__propname = ''
 
     def procProp(self, line):
+        '''
+        process the cascaded property informatin, which begins
+        with 'BeginProperty'
+
+        arguments:
+        line -- the target line
+        '''
         if (len(self.__propname) > 0):
             mo = FormProcessor.PPROP.match(line)
             if mo == None:
@@ -48,6 +59,12 @@ class FormProcessor(object):
 
 
     def process(self, line):
+        '''
+        process the frm files, and gather the controllers informations
+
+        arguments:
+        line -- the target line
+        '''
         if self.__pos == FormProcessor.BEFORE_ATTR:
             mo = FormProcessor.PCTRL.match(line) # match control definition begin "Begin VB.TYPE NAME"
             if mo == None: # not matched
