@@ -2,6 +2,8 @@
 # -*- encoding: utf8 -*-
 
 import re
+from StringTableInfo import StringTableInfo
+from JPChecker import hasJP
 
 class FormProcessor(object):
     '''
@@ -23,6 +25,8 @@ class FormProcessor(object):
         self.__ctrlStack = []
         self.__pos = FormProcessor.BEFORE_ATTR
         self.__propname = ''
+        self.__infos = []
+        self.__form_load = []
 
     def procProp(self, line):
         '''
@@ -65,6 +69,12 @@ class FormProcessor(object):
         arguments:
         line -- the target line
         '''
+
+        if self.__pos == BEFORE_ATTR and line.startswith('Attribute '):
+            self.__pos = FormProcessor.IN_ATTR
+        elif self.__pos == IN_ATTR and not line.startswith('Attribute '):
+            self.__pos = FormProcessor.AFTER_ATTR
+
         if self.__pos == FormProcessor.BEFORE_ATTR:
             mo = FormProcessor.PCTRL.match(line) # match control definition begin "Begin VB.TYPE NAME"
             if mo == None: # not matched
@@ -75,4 +85,64 @@ class FormProcessor(object):
                     self.__ctrlStack.append(self.__ctrl) # save the out level control
 
                 self.__ctrl = {'Type': mo.group(1), 'Name': mo.group(2)}
+
+    
+    def generateControllerInfo():
+        '''
+        analyze the controls info to generate the Japanese strings
+        return:
+        lines: the generated initialization code for form load
+        start: the start index for next process
+        '''
+        lines = []
+        for ctrl in self.__ctrls:
+
+            lines.append('    %s%s.Font.Name = LoadResString(%d)' % (ctrl['Name'],
+                    #if there is 'Index' property, then it is a member of controller array
+                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+            info = StringTableInfo(u'ＭＳ ゴシック', None, None, '%s%s.Font.Name' % (ctrl['Name'],
+                '('+ctrl['Index'] + ')' if u'Index' in ctrl else ''))
+
+            self.__infos.append(info)
+
+            lines.append('    %s%s.Font.Charset = LoadResString(%d)' % (ctrl['Name'],
+                    #if there is 'Index' property, then it is a member of controller array
+                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+            info = StringTableInfo('128', None, None, '%s%s.Font.Charset: 128 for JP, 134 for CN' % (ctrl['Name'],
+                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '')
+            self.__infos.append(info)
+
+
+            for prop in ctrl:
+                # 'Name' and 'Type' are not real control's properties
+                # 'Font' need to be processed specially
+                if prop in ('Name', 'Type', u'Font'): 
+                    continue
+
+                if type(ctrl[prop]) == dict:
+                    for propname in ctrl[prop]:
+                        if hasJP(ctrl[prop][propname]):
+                            info = StringTableInfo(ctrl[prop][propname][1:-1], None, None, u'%s.%s.%s = "%s"'
+                                % (ctrl['Name'], prop, propname, ctrl[prop][propname][1:-1])
+                            line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                                    #if there is 'Index' property, then it is a member of controller array
+                                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                                    prop, propname, start)
+                            self.__infos.append(info)
+                            lines.append(line)
+
+                elif hasJP(ctrl[prop]):
+                    info = StringTableInfo(ctrl[prop][1:-1], None, None, u'%s%s.%s = %s'
+                            % (ctrl['Name'], '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                            prop, ctrl[prop][1:-1]) )
+                    line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
+                            #if there is 'Index' property, then it is a member of controller array
+                            '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
+                            prop, start)
+                    self.__infos.append(info)
+                    lines.append(line)
+
+            lines.append('\r\n')
+
+        self.__form_load = lines
 
