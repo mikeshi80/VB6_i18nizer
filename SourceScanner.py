@@ -5,6 +5,9 @@ import codecs
 
 class SourceScanner(object):
     def __init__(self, stg, processor, encoding = 'cp932'):
+        '''
+        stg StringTableGenerator
+        '''
         self.__stg = stg
         self.__processor = processor
         self.__encoding = encoding
@@ -21,13 +24,13 @@ class SourceScanner(object):
     def processor(self):
         return self.__processor
 
-    def processLine(self, line):
+    def processLine(self, line, writer):
         infos = self.processor.process(line)
         if len(infos) > 0:
             index = []
             for info in infos:
                 index.append(self.stringTableGenerator.putInfo(info))
-            line = self.writer.replace(infos, index)
+            line = writer.replace(line, infos, index)
         return line
 
 
@@ -35,8 +38,8 @@ class SourceScanner(object):
         f = codecs.open(fname, 'r', self.encoding)
 
         for line in f:
-            line = self.processLine(line)
-            self.writer.addLine(line)
+            line = self.processLine(line, writer)
+            writer.addLine(line)
 
         f.close()
 

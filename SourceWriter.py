@@ -3,13 +3,12 @@
 
 class SourceWriter(object):
     def __init__(self):
-        pass
+        self.__lines = []
 
-    def replace(self, infos, index):
+    def replace(self, line, infos, index):
         if len(infos) == 0:
-            return ''
+            return line
 
-        line = infos[0].string
         retVal = u''
         last = 0
 
@@ -25,4 +24,7 @@ class SourceWriter(object):
             retVal = retVal + line[last:]
 
         return retVal
+
+    def addLine(self, line):
+        self.__lines.append(line)
 
