@@ -67,16 +67,17 @@ class StringTableGenerator(object):
         prim, sub = langs[lang.lower()]
 
         lines = []
-        for info in self.__strtbl:
+        for index in self.__strtbl:
+            info = self.__strtbl[index]
             hint = self.genHint(info)
             comment = ' //' + hint if len(hint) > 0 else ''
-            lines.append(' ' * 4 + str(info.index) + ' ' * 12 + '"' + info.string + '"' + comment )
+            lines.append(' ' * 4 + str(index) + ' ' * 12 + '"' + info.string + '"' + comment )
 
         return u'''STRINGTABLE\r
-    LANGUAGE %s, %s\r
-    BEGIN\r
-    %s\r
-    END\r
-    ''' % (prim, sub, u'\r\n'.join(lines))
+LANGUAGE %s, %s\r
+BEGIN\r
+%s\r
+END\r
+''' % (prim, sub, u'\r\n'.join(lines))
 
 
