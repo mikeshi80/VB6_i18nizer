@@ -4,10 +4,14 @@
 import unittest
 import codecs
 from FormProcessor import FormProcessor
+from StringTableGenerator import StringTableGenerator
 
 class FormProcessor_Test(unittest.TestCase):
     def setUp(self):
-        self.__processor = FormProcessor()
+
+        stg = StringTableGenerator(1001)
+
+        self.__processor = FormProcessor(stg)
 
     def test_procProp(self):
         line = u'      BeginProperty Font '

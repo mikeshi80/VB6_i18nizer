@@ -73,16 +73,18 @@ class SourceScanner(object):
         isForm = os.path.splitext(fname)[1].lower() == '.frm'
 
         if isForm:
-            formProc = FormProcessor()
+            formProc = FormProcessor(self.__stg)
 
         f = codecs.open(fname, 'r', self.encoding)
 
+        pos = FormProcessor.AFTER_ATTR
         for line in f:
-            line = self.processLine(line, writer)
-            writer.addLine(line)
-
             if isForm:
-                formProc.process(line)
+                pos = formProc.process(line)
+
+            if pos == FormProcessor.AFTER_ATTR:
+                line = self.processLine(line, writer)
+            writer.addLine(line)
 
         if isForm:
             formProc.generateControllerInfo()

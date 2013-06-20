@@ -19,14 +19,20 @@ class FormProcessor(object):
     IN_ATTR = 2
     AFTER_ATTR = 3
 
-    def __init__(self):
+    def __init__(self, stg):
+        '''
+        class contructor
+        
+        arguments:
+        stg -- StringTableGenerator
+        '''
         self.__ctrls = []
         self.__ctrl = None
         self.__ctrlStack = []
         self.__pos = FormProcessor.BEFORE_ATTR
         self.__propname = ''
-        self.__infos = []
         self.__form_load = []
+        self.__stg = stg
 
     @property
     def formLoad(self):
@@ -72,6 +78,9 @@ class FormProcessor(object):
 
         arguments:
         line -- the target line
+
+        return:
+        the current position in the frm file
         '''
 
         if self.__pos == FormProcessor.BEFORE_ATTR and line.startswith('Attribute '):
@@ -89,6 +98,7 @@ class FormProcessor(object):
                     self.__ctrlStack.append(self.__ctrl) # save the out level control
 
                 self.__ctrl = {'Type': mo.group(1), 'Name': mo.group(2)}
+        return self.__pos
 
     
     def generateControllerInfo(self):
@@ -103,18 +113,18 @@ class FormProcessor(object):
 
             lines.append('    %s%s.Font.Name = LoadResString(%d)' % (ctrl['Name'],
                     #if there is 'Index' property, then it is a member of controller array
-                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', self.__stg.index))
             info = StringTableInfo(u'ＭＳ ゴシック', None, None, '%s%s.Font.Name' % (ctrl['Name'],
                 '('+ctrl['Index'] + ')' if u'Index' in ctrl else ''))
 
-            self.__infos.append(info)
+            self.__stg.putInfo(info)
 
             lines.append('    %s%s.Font.Charset = LoadResString(%d)' % (ctrl['Name'],
                     #if there is 'Index' property, then it is a member of controller array
-                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
+                    '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', self.__stg.index))
             info = StringTableInfo('128', None, None, '%s%s.Font.Charset: 128 for JP, 134 for CN' % (ctrl['Name'],
                 '('+ctrl['Index'] + ')' if u'Index' in ctrl else ''))
-            self.__infos.append(info)
+            self.__stg.putInfo(info)
 
 
             for prop in ctrl:
@@ -131,8 +141,8 @@ class FormProcessor(object):
                             line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
                                     #if there is 'Index' property, then it is a member of controller array
                                     '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
-                                    prop, propname, start)
-                            self.__infos.append(info)
+                                    prop, propname, self.__stg.index)
+                            self.__stg.putInfo(info)
                             lines.append(line)
 
                 elif hasJP(ctrl[prop]):
@@ -142,8 +152,8 @@ class FormProcessor(object):
                     line = u'    %s%s.%s = LoadResString(%d)' % (ctrl['Name'],
                             #if there is 'Index' property, then it is a member of controller array
                             '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',
-                            prop, start)
-                    self.__infos.append(info)
+                            prop, self.__stg.index)
+                    self.__stg.putInfo(info)
                     lines.append(line)
 
             lines.append('\r\n')
