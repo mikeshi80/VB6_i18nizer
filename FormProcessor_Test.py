@@ -2,6 +2,7 @@
 # -*- encoding: utf8 -*-
 
 import unittest
+import codecs
 from FormProcessor import FormProcessor
 
 class FormProcessor_Test(unittest.TestCase):
@@ -177,6 +178,23 @@ class FormProcessor_Test(unittest.TestCase):
         self.assertEqual(self.__processor._FormProcessor__propname, u'')
         self.assertEqual(len(self.__processor._FormProcessor__ctrls), 4)
         self.assertEqual(len(self.__processor._FormProcessor__ctrlStack), 0)
+
+    def test_generateControllerInfo(self):
+        f = codecs.open('test/vbtest/test01.TXT', 'r', 'cp932')
+        for line in f:
+            self.__processor.process(line)
+        f.close()
+
+        self.assertEqual(self.__processor._FormProcessor__ctrl, None)
+        self.assertEqual(self.__processor._FormProcessor__propname, u'')
+        self.assertEqual(self.__processor._FormProcessor__pos, FormProcessor.BEFORE_ATTR)
+        self.assertEqual(len(self.__processor._FormProcessor__ctrls), 5)
+        self.assertEqual(self.__processor._FormProcessor__ctrlStack, [])
+
+        self.assertEqual(self.__processor._FormProcessor__ctrls[0]['Name'], u'Label1')
+        self.assertEqual(self.__processor._FormProcessor__ctrls[0]['Caption'], u'"ラベル３"')
+        self.assertEqual(self.__processor._FormProcessor__ctrls[0]['Index'], u'1')
+
 
         
 if __name__ == '__main__':
