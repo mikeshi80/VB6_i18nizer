@@ -41,7 +41,10 @@ class StringTableGenerator(object):
         end -- the end string, default is '</target>'
         '''
         if len(info.line) > 0:
-            return info.line[:info.begin] + begin + info.line[info.begin:info.end] + end + info.line[info.end:]
+            if info.begin == None or info.end == None:
+                return info.line
+            else:
+                return info.line[:info.begin] + begin + info.line[info.begin:info.end] + end + info.line[info.end:]
         else:
             return ''
 

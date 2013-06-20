@@ -4,46 +4,20 @@
 import re
 from StringTableInfo import StringTableInfo
 from JPChecker import hasJP
+from BaseProcessor import BaseProcessor
 
-class LineProcessor(object):
+class LineProcessor(BaseProcessor):
     '''
     class for processing line
     there are 2 functions:
     remove the comments
     extract the quoted string from the line
     '''
-    comments_patt = re.compile(u'("[^"]*")')
     quoted_patt = re.compile(r'("[^"]*")')
 
-    def removeComments(self, line):
-        r = LineProcessor.comments_patt.finditer(line)
-        
-        last = 0 # Last position
-        retVal = ""
-
-        for i in r:
-            if i.start() > last: # if there are charactors between two quoted strings
-                seg = line[last:i.start()]
-                cp = seg.find("'") # if there is comment mark in non quoted string
-                if cp != -1:
-                    return retVal + seg[0:cp]
-                else:
-                    last = i.end()
-                    retVal = line[:last]
-            else:
-                last = i.end()
-                retVal = line[:last]
-
-        if last == 0: # no quoted string at all
-            cp = line.find("'")
-            if cp != -1:
-                return line[0:cp]
-            else:
-                return line
-        else:
-            return retVal + line[last:]
     
     def process(self, line):
+        line = self.removeComments(line)
         infos = []
         for i in LineProcessor.quoted_patt.finditer(line):
             info = StringTableInfo(i.group(1)[1:-1], i.start(), i.end(), line[:-2] if line.endswith('\r\n') else line)

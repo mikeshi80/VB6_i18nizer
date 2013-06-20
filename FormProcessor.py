@@ -4,8 +4,9 @@
 import re
 from StringTableInfo import StringTableInfo
 from JPChecker import hasJP
+from BaseProcessor import BaseProcessor
 
-class FormProcessor(object):
+class FormProcessor(BaseProcessor):
     '''
     the processor for processing the controllers information
     in the frm files
@@ -83,6 +84,7 @@ class FormProcessor(object):
         the current position in the frm file
         '''
 
+        line = self.removeComments(line)
         if self.__pos == FormProcessor.BEFORE_ATTR and line.startswith('Attribute '):
             self.__pos = FormProcessor.IN_ATTR
         elif self.__pos == FormProcessor.IN_ATTR and not line.startswith('Attribute '):
