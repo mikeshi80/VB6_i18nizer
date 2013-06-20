@@ -28,6 +28,10 @@ class FormProcessor(object):
         self.__infos = []
         self.__form_load = []
 
+    @property
+    def formLoad(self):
+        return self.__form_load;
+
     def procProp(self, line):
         '''
         process the cascaded property informatin, which begins
@@ -70,9 +74,9 @@ class FormProcessor(object):
         line -- the target line
         '''
 
-        if self.__pos == BEFORE_ATTR and line.startswith('Attribute '):
+        if self.__pos == FormProcessor.BEFORE_ATTR and line.startswith('Attribute '):
             self.__pos = FormProcessor.IN_ATTR
-        elif self.__pos == IN_ATTR and not line.startswith('Attribute '):
+        elif self.__pos == FormProcessor.IN_ATTR and not line.startswith('Attribute '):
             self.__pos = FormProcessor.AFTER_ATTR
 
         if self.__pos == FormProcessor.BEFORE_ATTR:
@@ -87,7 +91,7 @@ class FormProcessor(object):
                 self.__ctrl = {'Type': mo.group(1), 'Name': mo.group(2)}
 
     
-    def generateControllerInfo():
+    def generateControllerInfo(self):
         '''
         analyze the controls info to generate the Japanese strings
         return:
@@ -109,7 +113,7 @@ class FormProcessor(object):
                     #if there is 'Index' property, then it is a member of controller array
                     '('+ctrl['Index'] + ')' if u'Index' in ctrl else '', start))
             info = StringTableInfo('128', None, None, '%s%s.Font.Charset: 128 for JP, 134 for CN' % (ctrl['Name'],
-                '('+ctrl['Index'] + ')' if u'Index' in ctrl else '')
+                '('+ctrl['Index'] + ')' if u'Index' in ctrl else ''))
             self.__infos.append(info)
 
 
@@ -123,7 +127,7 @@ class FormProcessor(object):
                     for propname in ctrl[prop]:
                         if hasJP(ctrl[prop][propname]):
                             info = StringTableInfo(ctrl[prop][propname][1:-1], None, None, u'%s.%s.%s = "%s"'
-                                % (ctrl['Name'], prop, propname, ctrl[prop][propname][1:-1])
+                                % (ctrl['Name'], prop, propname, ctrl[prop][propname][1:-1]))
                             line = u'    %s%s.%s.%s = LoadResString(%d)' % (ctrl['Name'],
                                     #if there is 'Index' property, then it is a member of controller array
                                     '('+ctrl['Index'] + ')' if u'Index' in ctrl else '',

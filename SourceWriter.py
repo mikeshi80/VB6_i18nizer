@@ -1,12 +1,24 @@
 #!/usr/bin/env python
 # -*- encoding: utf8 -*-
 
+import codecs
+
 class SourceWriter(object):
     '''
     The writer to write the processed source code
     '''
-    def __init__(self):
+    def __init__(self, fname, encoding='cp932'):
         self.__lines = []
+        self.__fname = fname
+        self.__encoding = encoding
+
+    @property
+    def encoding(self):
+        return self.__encoding
+
+    @encoding.setter
+    def encoding(self, value):
+        self.__encoding = value
 
     def replace(self, line, infos, index):
         '''
@@ -49,4 +61,27 @@ class SourceWriter(object):
         line -- the processed line
         '''
         self.__lines.append(line)
+
+    def addFormInfo(self, form_load):
+        '''
+        merge the form load source code
+        '''
+        if len(form_load) > 0:
+            form_load_line = -1
+            i = 0
+            for line in self.__lines:
+                i += 1
+                if line.startswith(u'Private Sub Form_Load()'):
+                    form_load_line = i
+                    break
+
+            if form_load_line == -1:
+                self.__lines += [u'\r\nPrivate Sub Form_Load()\r\n', u'\r\n'.join(form_load), u'\r\nEnd Sub\r\n']
+            else:
+                self.__lines.insert(form_load_line, u'\r\n'.join(form_load))
+
+    def write(self, test=False):
+        f = codecs.open(self.__fname + ('.test' if test else ''), 'w', self.encoding)
+        f.writelines(self.__lines)
+        f.close()
 

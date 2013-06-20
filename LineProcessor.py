@@ -6,6 +6,12 @@ from StringTableInfo import StringTableInfo
 from JPChecker import hasJP
 
 class LineProcessor(object):
+    '''
+    class for processing line
+    there are 2 functions:
+    remove the comments
+    extract the quoted string from the line
+    '''
     comments_patt = re.compile(u'("[^"]*")')
     quoted_patt = re.compile(r'("[^"]*")')
 

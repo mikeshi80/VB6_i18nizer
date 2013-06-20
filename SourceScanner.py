@@ -2,6 +2,8 @@
 # -*- encoding: utf8 -*-
 
 import codecs
+import os.path
+from FormProcessor import FormProcessor
 
 class SourceScanner(object):
     '''
@@ -68,11 +70,22 @@ class SourceScanner(object):
         fname -- the name of target file
         writer -- SourceWriter
         '''
+        isForm = os.path.splitext(fname)[1].lower() == '.frm'
+
+        if isForm:
+            formProc = FormProcessor()
+
         f = codecs.open(fname, 'r', self.encoding)
 
         for line in f:
             line = self.processLine(line, writer)
             writer.addLine(line)
 
+            if isForm:
+                formProc.process(line)
+
+        if isForm:
+            formProc.generateControllerInfo()
+            writer.addFormInfo(formProc.formLoad)
         f.close()
 

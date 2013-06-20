@@ -12,7 +12,7 @@ class SourceScanner_Test(unittest.TestCase):
         self.__stg = StringTableGenerator(1001)
         self.__processor = LineProcessor()
         self.__scanner = SourceScanner(self.__stg, self.__processor)
-        self.__writer = SourceWriter()
+        self.__writer = SourceWriter('c:/test.txt')
 
     def test_processLine(self):
         teststr = u'a = "Hello, " & "世界" & "人たち"'
