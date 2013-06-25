@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf8 -*-
+import copy
 
 class StringTableGenerator(object):
     '''
@@ -70,7 +71,10 @@ class StringTableGenerator(object):
         prim, sub = langs[lang.lower()]
 
         lines = []
-        for index in self.__strtbl:
+
+        keys = copy.copy(self.__strtbl.keys())
+        keys.sort()
+        for index in keys:
             info = self.__strtbl[index]
             hint = self.genHint(info)
             comment = ' //' + hint if len(hint) > 0 else ''

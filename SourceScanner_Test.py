@@ -31,8 +31,8 @@ class SourceScanner_Test(unittest.TestCase):
             self.assertTrue(filecmp.cmp(result, fname+ '.test'))
         except:
             raise
-        #finally:
-        #   os.remove(fname+'.test')
+        finally:
+           os.remove(fname+'.test')
 
     def test_scan_2(self):
         fname = 'test/vbtest/vbtest_without_load/Form1.frm'
@@ -44,8 +44,8 @@ class SourceScanner_Test(unittest.TestCase):
             self.assertTrue(filecmp.cmp(result, fname+ '.test'))
         except:
             raise
-        #finally:
-        #   os.remove(fname+'.test')
+        finally:
+           os.remove(fname+'.test')
         
 
 
